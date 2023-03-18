@@ -1,4 +1,5 @@
-﻿using AspNetCoreIdentity.Models;
+﻿using AspNetCoreIdentity.CustomValidations;
+using AspNetCoreIdentity.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AspNetCoreIdentity.Extensions
@@ -16,7 +17,7 @@ namespace AspNetCoreIdentity.Extensions
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireDigit = false;
-            }).AddEntityFrameworkStores<AppDbContext>();
+            }).AddPasswordValidator<PasswordValidator>().AddUserValidator<UserValidator>().AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }
