@@ -83,6 +83,11 @@ namespace AspNetCoreIdentity.Controllers
             {
                 return Redirect(returnUrl);
             }
+            if (signInResult.IsLockedOut)
+            {
+                ModelState.AddModelErrorList(new List<string>() { "3 dk boyunca giriş yapamazsınız" });
+                return View();
+            }
             ModelState.AddModelErrorList(new List<string>() { "Email veya şifre yanlış" });
 
             return View();

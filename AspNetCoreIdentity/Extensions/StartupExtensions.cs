@@ -17,6 +17,10 @@ namespace AspNetCoreIdentity.Extensions
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequireDigit = false;
+
+
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);//3 dk User kilitle
+                options.Lockout.MaxFailedAccessAttempts = 3;//3 kez yanlış şifre girilirse
             }).AddPasswordValidator<PasswordValidator>().AddUserValidator<UserValidator>().AddEntityFrameworkStores<AppDbContext>();
         }
     }
