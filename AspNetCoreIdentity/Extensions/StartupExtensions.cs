@@ -1,5 +1,6 @@
 ﻿using AspNetCoreIdentity.CustomValidations;
 using AspNetCoreIdentity.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace AspNetCoreIdentity.Extensions
@@ -8,6 +9,10 @@ namespace AspNetCoreIdentity.Extensions
     {
         public static void AddIdentityWithExtension(this IServiceCollection services)
         {
+            services.Configure<DataProtectionTokenProviderOptions>(options =>
+            {
+                options.TokenLifespan = TimeSpan.FromHours(2);//Email şifre göndermede 2 saat ömrü olacak
+            });
             services.AddIdentity<AppUser, AppRole>(options =>
             {
                 options.User.RequireUniqueEmail = true;
@@ -21,7 +26,10 @@ namespace AspNetCoreIdentity.Extensions
 
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);//3 dk User kilitle
                 options.Lockout.MaxFailedAccessAttempts = 3;//3 kez yanlış şifre girilirse
-            }).AddPasswordValidator<PasswordValidator>().AddUserValidator<UserValidator>().AddEntityFrameworkStores<AppDbContext>();
+            }).AddPasswordValidator<PasswordValidator>()
+            .AddUserValidator<UserValidator>()
+            .AddDefaultTokenProviders()
+            .AddEntityFrameworkStores<AppDbContext>();
         }
     }
 }
