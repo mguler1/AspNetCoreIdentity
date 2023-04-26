@@ -4,6 +4,7 @@ using AspNetCoreIdentity.Models.OptionsModel;
 using AspNetCoreIdentity.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {
     options.ValidationInterval = TimeSpan.FromMinutes(30);
 });
+builder.Services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.GetCurrentDirectory()));// Hangi classdan eriþmek istiyorsak bu interface geçersek eriþim saðlayabiliriz.
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddIdentityWithExtension();//içerisi extensions klasöründe
 builder.Services.AddScoped<IEmailService, EmailService>();
