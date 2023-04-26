@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AspNetCoreIdentity.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace AspNetCoreIdentity.ViewModels
 {
@@ -28,6 +29,6 @@ namespace AspNetCoreIdentity.ViewModels
         public IFormFile? Picture { get; set; }
 
         [Display(Name = "Cinsiyet :")]
-        public byte?  Gender { get; set; }
+        public Gender?  Gender { get; set; }
     }
 }

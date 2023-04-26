@@ -4,6 +4,7 @@ using AspNetCoreIdentity.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AspNetCoreIdentity.Controllers
 {
@@ -12,7 +13,7 @@ namespace AspNetCoreIdentity.Controllers
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
-      
+
         public MemberController(SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
         {
             _signInManager = signInManager;
@@ -26,17 +27,17 @@ namespace AspNetCoreIdentity.Controllers
                 Email = currentUser.Email,
                 UserName = currentUser.UserName,
                 PhoneNumber = currentUser.PhoneNumber,
-               // PictureUrl = currentUser.Picture
+                // PictureUrl = currentUser.Picture
             };
 
             return View(userViewModel);
-         
+
         }
 
-        public async Task  Logout()
+        public async Task Logout()
         {
-           await _signInManager.SignOutAsync();
-           
+            await _signInManager.SignOutAsync();
+
         }
         public IActionResult PasswordChange()
         {
@@ -65,7 +66,7 @@ namespace AspNetCoreIdentity.Controllers
 
             if (!resultChangePassword.Succeeded)
             {
-               ModelState.AddModelErrorList(resultChangePassword.Errors.Select(x=>x.Description).ToList());
+                ModelState.AddModelErrorList(resultChangePassword.Errors.Select(x => x.Description).ToList());
                 return View();
             }
 
@@ -78,5 +79,20 @@ namespace AspNetCoreIdentity.Controllers
             return View();
         }
 
+        public async Task<IActionResult> UserEdit()
+        {
+            ViewBag.genderList = new SelectList(Enum.GetNames(typeof(Gender)));
+            var currentUser = (await _userManager.FindByNameAsync(User.Identity!.Name!))!;
+            var userEditViewModel = new UserEditViewModel()
+            {
+                UserName = currentUser.UserName!,
+                Email = currentUser.Email!,
+                BirthDay = currentUser.BirthdDay,
+                City = currentUser.City,
+                Gender = currentUser.Gender,
+                Phone = currentUser.PhoneNumber!
+            };
+            return View(userEditViewModel);
+        }
     }
 }
