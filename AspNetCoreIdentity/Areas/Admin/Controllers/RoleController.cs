@@ -3,6 +3,8 @@ using AspNetCoreIdentity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreIdentity.Extensions;
+using Microsoft.EntityFrameworkCore;
+
 namespace AspNetCoreIdentity.Areas.Admin.Controllers
 {
     [Area("Admin")]
@@ -17,16 +19,22 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             _roleManager = roleManager;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var roles =await _roleManager.Roles.Select(x => new RoleViewModel()
+            {
+                Id = x.Id,
+                Name = x.Name!
+            }).ToListAsync();
+
+            return View(roles);
         }
         public IActionResult RoleCreate()
         {
             return View();
         }
         [HttpPost]
-        public async Task <IActionResult> RoleCreate(RoleCreateViewModel request)
+        public async Task<IActionResult> RoleCreate(RoleCreateViewModel request)
         {
             var result = await _roleManager.CreateAsync(new AppRole() { Name = request.Name });
             if (!result.Succeeded)
@@ -34,7 +42,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
                 ModelState.AddModelErrorList(result.Errors);
                 return View();
             }
-          return RedirectToAction(nameof(RoleController.Index));
+            return RedirectToAction(nameof(RoleController.Index));
         }
     }
 }
