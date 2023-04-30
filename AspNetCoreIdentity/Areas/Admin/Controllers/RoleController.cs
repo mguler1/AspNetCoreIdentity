@@ -21,7 +21,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var roles =await _roleManager.Roles.Select(x => new RoleViewModel()
+            var roles = await _roleManager.Roles.Select(x => new RoleViewModel()
             {
                 Id = x.Id,
                 Name = x.Name!
@@ -45,14 +45,14 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             return RedirectToAction(nameof(RoleController.Index));
         }
 
-        public async Task<IActionResult>RoleUpdate(string id)
+        public async Task<IActionResult> RoleUpdate(string id)
         {
             var roleToUpdate = await _roleManager.FindByIdAsync(id);
-            if (roleToUpdate==null)
+            if (roleToUpdate == null)
             {
                 throw new Exception("Rol Bulunamamıştır");
             }
-            return View(new RoleUpdateViewModel() { Id=roleToUpdate.Id,Name=roleToUpdate!.Name!});
+            return View(new RoleUpdateViewModel() { Id = roleToUpdate.Id, Name = roleToUpdate!.Name! });
         }
         [HttpPost]
         public async Task<IActionResult> RoleUpdate(RoleUpdateViewModel request)
@@ -62,10 +62,31 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             {
                 throw new Exception("Rol Bulunamamıştır");
             }
-            roleToUpdate.Name=request.Name;
+            roleToUpdate.Name = request.Name;
             await _roleManager.UpdateAsync(roleToUpdate);
             ViewData["SuccessMessage"] = "Rol Bilgisi Güncellenmiştir.";
             return View(request);
+        }
+
+        public async Task<IActionResult> RoleDelete(string id)
+        {
+            var roleToDelete = await _roleManager.FindByIdAsync(id);
+
+            if (roleToDelete == null)
+            {
+                throw new Exception("Silinecek rol bulunamamıştır.");
+            }
+
+            var result = await _roleManager.DeleteAsync(roleToDelete);
+
+            if (!result.Succeeded)
+            {
+                throw new Exception(result.Errors.Select(x => x.Description).First());
+            }
+
+            TempData["SuccessMessage"] = "Rol silinmiştir";
+            return RedirectToAction(nameof(RoleController.Index));
+
         }
     }
 }
