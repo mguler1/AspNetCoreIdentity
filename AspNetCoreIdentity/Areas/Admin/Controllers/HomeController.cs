@@ -1,5 +1,6 @@
 ﻿using AspNetCoreIdentity.Areas.Admin.Models;
 using AspNetCoreIdentity.Models;
+using AspNetCoreIdentity.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +24,10 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
         public async Task<IActionResult> UserList()
         {
             var userList = await _userManager.Users.ToListAsync();
-            var userViewListModel = userList.Select(x => new UserListViewModel()
+            var userViewListModel = userList.Select(x => new UserViewModel()
             {
-                UserId = x.Id,
-                UserMail = x.Email,
+                Id = x.Id,
+                Email = x.Email,
                 UserName = x.UserName
             }).ToList();
             return View(userViewListModel);

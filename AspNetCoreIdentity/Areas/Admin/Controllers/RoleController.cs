@@ -88,5 +88,43 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             return RedirectToAction(nameof(RoleController.Index));
 
         }
+
+
+        public async Task<IActionResult> AssignToRoleToUser(string id) 
+        {
+            var currentUser = (await _userManager.FindByIdAsync(id))!;
+            ViewBag.userId = id;
+            var roles = await _roleManager.Roles.ToListAsync();
+            var userRoles = await _userManager.GetRolesAsync(currentUser);
+            var roleViewModelList = new List<AssignRoleToUserViewModel>();
+
+            foreach (var role in roles)
+            {
+                var assignRoleToUserViewModel = new AssignRoleToUserViewModel() { Id = role.Id, Name = role.Name! };
+                if (userRoles.Contains(role.Name!))
+                {
+                    assignRoleToUserViewModel.Exist = true;
+                }
+                roleViewModelList.Add(assignRoleToUserViewModel);
+            }
+            return View(roleViewModelList);
+        }
+        [HttpPost]
+        public async Task<IActionResult> AssignToRoleToUser(string userId, List<AssignRoleToUserViewModel> requestList)
+        {
+            var userToAssignRoles = (await _userManager.FindByIdAsync(userId))!;
+            foreach (var role in requestList)
+            {
+                if (role.Exist)
+                {
+                    await _userManager.AddToRoleAsync(userToAssignRoles, role.Name);
+                }
+                else
+                {
+                    await _userManager.RemoveFromRoleAsync(userToAssignRoles, role.Name);
+                }
+            }
+            return RedirectToAction(nameof(HomeController.UserList), "Home");
+        }
     }
 }
