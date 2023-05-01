@@ -14,10 +14,6 @@
 
                 <li><a class="dropdown-item" asp-controller="Member" asp-action="Claims">Claims</a></li>
 
-
-
-
-
                 @if (User.HasClaim(x => x.Type == ClaimTypes.Role && x.Value == "admin"))
                 {
                     <li><a class="dropdown-item" asp-area="admin" asp-controller="Home" asp-action="Index">Admin</a></li>

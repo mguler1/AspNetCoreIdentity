@@ -29,6 +29,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
     cookieBuilder.Name = "IdentityCookie";
     opt.LoginPath =new PathString("/Home/SignIn");
     opt.LogoutPath= new PathString("/Member/LogOut");
+    opt.AccessDeniedPath = new PathString("/Member/AccessDenied");
     opt.Cookie = cookieBuilder;
     opt.ExpireTimeSpan=TimeSpan.FromDays(10);//10 gün  geçerli
     opt.SlidingExpiration = true;//cookie sakla her girþte yenilemek için

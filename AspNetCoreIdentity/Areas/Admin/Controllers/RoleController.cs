@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using AspNetCoreIdentity.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetCoreIdentity.Areas.Admin.Controllers
 {
@@ -18,7 +19,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             _userManager = userManager;
             _roleManager = roleManager;
         }
-
+        [Authorize(Roles = "Admin,Role-Action")]
         public async Task<IActionResult> Index()
         {
             var roles = await _roleManager.Roles.Select(x => new RoleViewModel()
@@ -29,10 +30,13 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
 
             return View(roles);
         }
+
+        [Authorize(Roles ="Admin,Role-Action")]
         public IActionResult RoleCreate()
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Role-Action")]
         [HttpPost]
         public async Task<IActionResult> RoleCreate(RoleCreateViewModel request)
         {
@@ -44,7 +48,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             }
             return RedirectToAction(nameof(RoleController.Index));
         }
-
+        [Authorize(Roles = "Admin,Role-Action")]
         public async Task<IActionResult> RoleUpdate(string id)
         {
             var roleToUpdate = await _roleManager.FindByIdAsync(id);
@@ -54,6 +58,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             }
             return View(new RoleUpdateViewModel() { Id = roleToUpdate.Id, Name = roleToUpdate!.Name! });
         }
+        [Authorize(Roles = "Admin,Role-Action")]
         [HttpPost]
         public async Task<IActionResult> RoleUpdate(RoleUpdateViewModel request)
         {
@@ -67,7 +72,7 @@ namespace AspNetCoreIdentity.Areas.Admin.Controllers
             ViewData["SuccessMessage"] = "Rol Bilgisi Güncellenmiştir.";
             return View(request);
         }
-
+        [Authorize(Roles = "Admin,Role-Action")]
         public async Task<IActionResult> RoleDelete(string id)
         {
             var roleToDelete = await _roleManager.FindByIdAsync(id);
