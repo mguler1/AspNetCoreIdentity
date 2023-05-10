@@ -33,15 +33,12 @@ namespace AspNetCoreIdentity.Controllers
                 PhoneNumber = currentUser.PhoneNumber,
                 PictureUrl = currentUser.Picture
             };
-
             return View(userViewModel);
-
         }
 
         public async Task Logout()
         {
             await _signInManager.SignOutAsync();
-
         }
         public IActionResult PasswordChange()
         {
@@ -108,7 +105,6 @@ namespace AspNetCoreIdentity.Controllers
                 return View();
             }
             var currentUser = await _userManager.FindByNameAsync(User.Identity!.Name!);
-
             currentUser.UserName = request.UserName;
             currentUser.Email = request.Email;
             currentUser.PhoneNumber = request.Phone;
@@ -168,6 +164,29 @@ namespace AspNetCoreIdentity.Controllers
             message = "Bu sayfayı görmeye yetkiniz yoktur. Yetki almak için  yöneticiniz ile görüşebilirsiniz.";
             ViewBag.message = message;
             return View();
+        }
+
+        [HttpGet]
+        public IActionResult Claims()
+        {
+            var userClaimList = User.Claims.Select(x => new ClaimViewModel()
+            {
+                Issuer = x.Issuer,
+                Type = x.Type,
+                Value = x.Value
+            }).ToList();
+
+            return View(userClaimList);
+
+        }
+
+
+        [Authorize(Policy = "AnkaraPolicy")]
+        [HttpGet]
+        public IActionResult AnkaraPage()
+        {
+            return View();
+
         }
     }
 }

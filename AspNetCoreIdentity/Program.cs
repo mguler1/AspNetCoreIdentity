@@ -1,7 +1,9 @@
+using AspNetCoreIdentity.ClaimsProvider;
 using AspNetCoreIdentity.Extensions;
 using AspNetCoreIdentity.Models;
 using AspNetCoreIdentity.Models.OptionsModel;
 using AspNetCoreIdentity.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -23,6 +25,17 @@ builder.Services.AddSingleton<IFileProvider>(new PhysicalFileProvider(Directory.
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddIdentityWithExtension();//içerisi extensions klasöründe
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
+
+//policy tanýmlama
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AnkaraPolicy", policy => 
+    {
+        policy.RequireClaim("city", "ankara");
+    });
+});
+
 builder.Services.ConfigureApplicationCookie(opt =>
 {
     var cookieBuilder=new CookieBuilder();
@@ -47,12 +60,9 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
-
 app.MapControllerRoute(
     name: "areas",
     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
