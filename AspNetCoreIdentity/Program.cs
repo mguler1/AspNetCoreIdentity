@@ -44,6 +44,11 @@ builder.Services.AddAuthorization(options =>
          policy.AddRequirements(new ExchangeExpireRequirement());
 	 });
 
+	options.AddPolicy("ViolancePolicy", policy =>
+	{
+		policy.AddRequirements(new ViolanceRequirement() { ThresholdAge=18});
+	});
+
 });
 
 builder.Services.ConfigureApplicationCookie(opt =>

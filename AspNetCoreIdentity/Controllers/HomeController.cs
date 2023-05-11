@@ -80,35 +80,42 @@ namespace AspNetCoreIdentity.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> SignIn(SignInViewModel model, string? returnUrl = null)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View();
-            }
+		{
+			if (!ModelState.IsValid)
+			{
+				return View();
+			}
 
-            returnUrl ??= Url.Action("Index", "Home");
-            var hasUser = await _userManager.FindByEmailAsync(model.Email);
+			returnUrl ??= Url.Action("Index", "Home");
 
-            if (hasUser == null)
-            {
-                ModelState.AddModelError(string.Empty, "Email veya şifre yanlış");
-                return View();
-            }
-            var signInResult = await _signInManager.PasswordSignInAsync(hasUser, model.Password, model.RememberMe, true);
+			var hasUser = await _userManager.FindByEmailAsync(model.Email);
 
-            if (signInResult.Succeeded)
-            {
-                return Redirect(returnUrl);
-            }
-            if (signInResult.IsLockedOut)
-            {
-                ModelState.AddModelErrorList(new List<string>() { "3 dk boyunca giriş yapamazsınız" });
-                return View();
-            }
-            ModelState.AddModelErrorList(new List<string>() { "Email veya şifre yanlış" });
+			if (hasUser == null)
+			{
+				ModelState.AddModelError(string.Empty, "Email veya şifre yanlış");
+				return View();
+			}
+			var signInResult = await _signInManager.PasswordSignInAsync(hasUser, model.Password, model.RememberMe, true);
 
-            return View();
-        }
+
+			if (signInResult.IsLockedOut)
+			{
+				ModelState.AddModelErrorList(new List<string>() { "3 dakika boyunca giriş yapamazsınız." });
+				return View();
+			}
+
+			if (!signInResult.Succeeded)
+			{
+				ModelState.AddModelErrorList(new List<string>() { $"Email veya şifre yanlış", $"Başarısız giriş sayısı = {await _userManager.GetAccessFailedCountAsync(hasUser)}" });
+				return View();
+			}
+
+			if (hasUser.BirthdDay.HasValue)
+			{
+				await _signInManager.SignInWithClaimsAsync(hasUser, model.RememberMe, new[] { new Claim("birthday", hasUser.BirthdDay.Value.ToString()) });
+			}
+			return Redirect(returnUrl!);
+		}
 
         public IActionResult ForgetPassword()
         {
