@@ -6,6 +6,7 @@ using System.Diagnostics;
 using AspNetCoreIdentity.Extensions;
 using Azure.Core;
 using AspNetCoreIdentity.Services;
+using System.Security.Claims;
 
 namespace AspNetCoreIdentity.Controllers
 {
@@ -15,7 +16,7 @@ namespace AspNetCoreIdentity.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailService _emailService;
-        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager,SignInManager<AppUser> signInManager,IEmailService emailService )
+        public HomeController(ILogger<HomeController> logger, UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, IEmailService emailService)
         {
             _logger = logger;
             _userManager = userManager;
@@ -50,16 +51,27 @@ namespace AspNetCoreIdentity.Controllers
                 Email = request.Email
 
             }, request.PasswordConfirm);
-            
 
-
-            if (identitiyResult.Succeeded)
+            if (!identitiyResult.Succeeded)
             {
-                TempData["SuccessMessage"] = "Üyelik Kayıt İşlemi  Başarılı Şekilde Gerçekleşmiştir.";
-                return RedirectToAction(nameof(HomeController.SignUp));
+                ModelState.AddModelErrorList(identitiyResult.Errors.Select(x => x.Description).ToList());
+                return View();
             }
-            ModelState.AddModelErrorList(identitiyResult.Errors.Select(x => x.Description).ToList());
-            return View();
+
+            var excahangeExpireClaim = new Claim("ExchangeExpireDate", DateTime.Now.AddDays(10).ToString());//10 gün sonra  sayfaya erişim olmayacak
+            var user = await _userManager.FindByNameAsync(request.UserName);//useri elde ettim
+            var claimResult = await _userManager.AddClaimAsync(user!, excahangeExpireClaim);//claimi kullanıcıya ekledim
+
+            if (!claimResult.Succeeded)
+            {
+                ModelState.AddModelErrorList(claimResult.Errors.Select(x => x.Description).ToList());
+                return View();
+            }
+            TempData["SuccessMessage"] = "Üyelik Kayıt İşlemi  Başarılı Şekilde Gerçekleşmiştir.";
+            return RedirectToAction(nameof(HomeController.SignUp));
+
+
+
         }
 
         public IActionResult SignIn()
@@ -67,7 +79,7 @@ namespace AspNetCoreIdentity.Controllers
             return View();
         }
         [HttpPost]
-        public  async Task<IActionResult> SignIn(SignInViewModel model ,string? returnUrl=null)
+        public async Task<IActionResult> SignIn(SignInViewModel model, string? returnUrl = null)
         {
             if (!ModelState.IsValid)
             {
@@ -117,7 +129,7 @@ namespace AspNetCoreIdentity.Controllers
             string passwordResestToken = await _userManager.GeneratePasswordResetTokenAsync(hasUser);
 
             var passwordResetLink = Url.Action("ResetPassword", "Home", new { userId = hasUser.Id, Token = passwordResestToken }, HttpContext.Request.Scheme);
-           
+
 
             await _emailService.SendResetPasswordEmail(passwordResetLink!, hasUser.Email!);
 
