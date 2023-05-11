@@ -29,6 +29,7 @@ builder.Services.AddIdentityWithExtension();//içerisi extensions klasöründe
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpireRequirementHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ViolanceRequirementHandler>();
 
 //policy tanýmlama
 builder.Services.AddAuthorization(options =>
