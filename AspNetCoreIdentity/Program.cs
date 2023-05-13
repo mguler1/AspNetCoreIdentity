@@ -2,7 +2,9 @@ using AspNetCoreIdentity.ClaimsProvider;
 using AspNetCoreIdentity.Extensions;
 using AspNetCoreIdentity.Models;
 using AspNetCoreIdentity.Models.OptionsModel;
+using AspNetCoreIdentity.Permisson;
 using AspNetCoreIdentity.Requirements;
+using AspNetCoreIdentity.Seeds;
 using AspNetCoreIdentity.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -49,6 +51,27 @@ builder.Services.AddAuthorization(options =>
 	{
 		policy.AddRequirements(new ViolanceRequirement() { ThresholdAge=18});
 	});
+	options.AddPolicy("OrderPermissionReadAndDelete", policy =>
+	{
+        policy.RequireClaim("permission", Permisson.Order.Read);
+        policy.RequireClaim("permission", Permisson.Order.Delete);
+        policy.RequireClaim("permission", Permisson.Stock.Delete);
+	});
+
+	options.AddPolicy("Permisson.Order.Read", policy =>
+	{
+		policy.RequireClaim("permission", Permisson.Order.Read);
+	}); 
+    
+    options.AddPolicy("Permisson.Order.Delete", policy =>
+	{
+		policy.RequireClaim("permission", Permisson.Order.Delete);
+	});
+	options.AddPolicy("Permisson.Stock.Delete", policy =>
+	{
+		policy.RequireClaim("permission", Permisson.Stock.Delete);
+	});
+
 
 });
 
@@ -65,14 +88,20 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 });
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+//seed datayý çaðýrma iþlemi
+using (var scope=app.Services.CreateScope())
 {
-    app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var roleManager = scope.ServiceProvider.GetRequiredService < RoleManager < AppRole >>();
+	await PermissonSeed.Seed(roleManager);
 }
+
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
