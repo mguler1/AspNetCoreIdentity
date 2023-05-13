@@ -4,9 +4,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using AspNetCoreIdentity.Extensions;
-using AspNetCoreIdentity.Services;
+
 using System.Security.Claims;
 using Core.Models;
+using AspNetCoreIdentity.Service.Services;
 
 namespace AspNetCoreIdentity.Controllers
 {

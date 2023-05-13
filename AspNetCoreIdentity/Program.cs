@@ -5,12 +5,13 @@ using AspNetCoreIdentity.Core.OptionsModel;
 using AspNetCoreIdentity.Core.Permisson;
 using AspNetCoreIdentity.Requirements;
 using AspNetCoreIdentity.Seeds;
-using AspNetCoreIdentity.Services;
+using AspNetCoreIdentity.Service.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IClaimsTransformation, UserClaimProvider>();
 builder.Services.AddScoped<IAuthorizationHandler, ExchangeExpireRequirementHandler>();
 builder.Services.AddScoped<IAuthorizationHandler, ViolanceRequirementHandler>();
+builder.Services.AddScoped<IMemberService, MemberService>();
 
 //policy tanýmlama
 builder.Services.AddAuthorization(options =>

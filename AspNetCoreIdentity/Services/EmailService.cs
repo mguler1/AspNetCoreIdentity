@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Mail;
 using System.Net;
-using AspNetCoreIdentity.Services;
+using AspNetCoreIdentity.Service.Services;
 using AspNetCoreIdentity.Core.OptionsModel;
 
 namespace AspNetCoreIdentity.Core.Services
