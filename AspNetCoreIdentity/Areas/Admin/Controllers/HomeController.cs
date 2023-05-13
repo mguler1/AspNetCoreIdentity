@@ -1,6 +1,6 @@
 ﻿using AspNetCoreIdentity.Areas.Admin.Models;
-using AspNetCoreIdentity.Models;
-using AspNetCoreIdentity.ViewModels;
+using AspNetCoreIdentity.Repository.Models;
+using AspNetCoreIdentity.Core.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

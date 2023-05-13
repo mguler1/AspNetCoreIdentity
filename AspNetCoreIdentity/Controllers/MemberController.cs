@@ -1,12 +1,13 @@
 ﻿using AspNetCoreIdentity.Extensions;
-using AspNetCoreIdentity.Models;
-using AspNetCoreIdentity.ViewModels;
+using AspNetCoreIdentity.Repository.Models;
+using AspNetCoreIdentity.Core.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.FileProviders;
 using System.Security.Claims;
+using Core.Models;
 
 namespace AspNetCoreIdentity.Controllers
 {

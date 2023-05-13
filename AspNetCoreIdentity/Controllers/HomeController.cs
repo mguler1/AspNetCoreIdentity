@@ -1,12 +1,12 @@
-﻿using AspNetCoreIdentity.Models;
-using AspNetCoreIdentity.ViewModels;
+﻿using AspNetCoreIdentity.Repository.Models;
+using AspNetCoreIdentity.Core.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using AspNetCoreIdentity.Extensions;
-using Azure.Core;
 using AspNetCoreIdentity.Services;
 using System.Security.Claims;
+using Core.Models;
 
 namespace AspNetCoreIdentity.Controllers
 {

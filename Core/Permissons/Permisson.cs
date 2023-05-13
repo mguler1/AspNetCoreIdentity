@@ -1,4 +1,4 @@
-﻿namespace AspNetCoreIdentity.Permisson
+﻿namespace AspNetCoreIdentity.Core.Permisson
 {
 	public static  class Permisson
 	{

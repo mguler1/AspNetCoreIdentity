@@ -1,5 +1,5 @@
 ﻿using AspNetCoreIdentity.CustomValidations;
-using AspNetCoreIdentity.Models;
+using AspNetCoreIdentity.Repository.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 

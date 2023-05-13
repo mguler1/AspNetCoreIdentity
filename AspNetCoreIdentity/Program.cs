@@ -1,8 +1,8 @@
 using AspNetCoreIdentity.ClaimsProvider;
 using AspNetCoreIdentity.Extensions;
-using AspNetCoreIdentity.Models;
-using AspNetCoreIdentity.Models.OptionsModel;
-using AspNetCoreIdentity.Permisson;
+using AspNetCoreIdentity.Repository.Models;
+using AspNetCoreIdentity.Core.OptionsModel;
+using AspNetCoreIdentity.Core.Permisson;
 using AspNetCoreIdentity.Requirements;
 using AspNetCoreIdentity.Seeds;
 using AspNetCoreIdentity.Services;
@@ -19,7 +19,9 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlCon"), options => {
+        options.MigrationsAssembly("Repositories");
+        });
 });
 builder.Services.Configure<SecurityStampValidatorOptions>(options =>
 {

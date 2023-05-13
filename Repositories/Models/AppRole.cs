@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace AspNetCoreIdentity.Models
+namespace AspNetCoreIdentity.Repository.Models
 {
     public class AppRole:IdentityRole
     {

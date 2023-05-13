@@ -22,4 +22,9 @@
     <Folder Include="wwwroot\userpictures\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Repositories\Repositories.csproj" />
+  </ItemGroup>
+
 </Project>
