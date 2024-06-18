@@ -3,7 +3,7 @@ name: NuGet_Publish
 on:
   pull_request:
     branches: [ main ]
-    types: [closed]
+    types: [ closed ]
 
 jobs:
   build:
@@ -11,27 +11,37 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 7.0.x
-    - name: Nuget Login
-      run: dotnet nuget add source https://nuget.pkg.github.com/mguler1/index.json 
+
+    - name: NuGet Login
+      env:
+        NUGET_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget add source https://nuget.pkg.github.com/mguler1/index.json -n github -u mguler1 -p ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text
+    
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --no-restore
+
     - name: Pack
       run: dotnet pack AspNetCoreIdentity/AspNetCoreIdentity.csproj -c Release -o out
-    - name: Publish Nuget to GitHub registry
-      run: dotnet nuget push ./out/*.nupkg -k  -s https://nuget.pkg.github.com/mguler1/index.json --skip-duplicate --no-symbols 
-   
+
+    - name: Publish NuGet to GitHub registry
+      env:
+        NUGET_API_KEY: ${{ secrets.GITHUB_TOKEN }}
+      run: dotnet nuget push ./out/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/mguler1/index.json --skip-duplicate --no-symbols
+    
     - name: Create Release
       id: create_release
       uses: actions/create-release@v1
-    
       with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
+        tag_name: ${{ github.run_number }}
+        release_name: Release ${{ github.run_number }}
+        draft: false
+        prerelease: false
+        token: ${{ secrets.GITHUB_TOKEN }}
